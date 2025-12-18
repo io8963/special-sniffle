@@ -1409,5 +1409,17 @@ a:focus, button:focus, .tag-cloud-item:focus {
     
     a::after { transform: none !important; }
 }
-
+/* =========================================
+   S. 404 页面适配
+   ========================================= */
+@media (prefers-color-scheme: dark) {
+    .page-404 .error-code {
+        background: linear-gradient(135deg, var(--color-link-dark), #ffffff);
+        -webkit-background-clip: text;
+    }
+    .back-home {
+        background-color: var(--color-link-dark);
+        color: var(--color-background-dark) !important;
+    }
+}
 /* --- END OF FILE style.css --- */
