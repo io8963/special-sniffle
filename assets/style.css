@@ -73,6 +73,8 @@
     --color-main-border: var(--color-border);
     
     --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    /* [优化] 新增代码等宽字体族，强制覆盖 Windows 默认宋体 */
+    --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', 'Consolas', 'Segoe UI Mono', 'Liberation Mono', 'Menlo', Monaco, monospace;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -162,8 +164,6 @@ h1, h2, h3, h4, h5, h6 {
     font-weight: 700;
     color: var(--color-main-text);
     scroll-margin-top: 90px;
-    /* [修复] 移除 text-wrap: balance; 解决手机端标题提前换行导致的“错行”视觉问题 */
-    /* text-wrap: balance; */
     overflow-wrap: break-word; /* 确保长单词不会撑破布局 */
 }
 h1 { font-size: 2rem; letter-spacing: -0.02em; line-height: 1.2; }
@@ -503,7 +503,9 @@ main { flex-grow: 1; padding: 40px 0 80px; }
     }
 }
 
+/* [优化] 行内代码也统一应用等宽字体 */
 .post-content code:not(pre code) {
+    font-family: var(--font-mono);
     color: var(--color-text); font-weight: 500; padding: 2px 4px; border-radius: 4px; 
     font-size: 0.9em;
     border: 1px solid rgba(0, 0, 0, 0.05); background-color: var(--color-code-bg);
@@ -514,8 +516,13 @@ main { flex-grow: 1; padding: 40px 0 80px; }
     }
 }
 
-/* --- [核心优化] 代码块 IDE 风格 & 语言显示 --- */
+/* --- [核心优化] 代码块 IDE 风格 & 字体优化 --- */
 .post-content pre {
+    /* [优化] 应用等宽字体族，增强 Windows 渲染 */
+    font-family: var(--font-mono);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+
     position: relative;
     padding: 45px 15px 15px 15px; /* 顶部加高，给标题栏留位 */
     border-radius: 8px; 
@@ -725,7 +732,7 @@ main { flex-grow: 1; padding: 40px 0 80px; }
     display: flex; justify-content: flex-start; flex-wrap: wrap; align-items: center; gap: 15px; 
 }
 .meta-date {
-    font-family: var(--font-sans); font-size: 0.9rem; padding: 3px 6px; border-radius: 4px; 
+    font-family: var(--font-mono); font-size: 0.9rem; padding: 3px 6px; border-radius: 4px; 
     background-color: var(--color-code-bg); border: 1px solid var(--color-main-border); opacity: 1; 
     display: flex; align-items: center; line-height: 1.2; height: 1.8em; 
 }
@@ -767,17 +774,14 @@ main { flex-grow: 1; padding: 40px 0 80px; }
 .post-list-item {
     display: block; 
     position: relative; /* 确保层级 */
-    /* [修复] 左侧内边距增加 4px (15+4=19) 以补偿移除的 border-left 空间 */
     padding: 20px 20px 20px 19px; 
     border-bottom: 1px dashed var(--color-main-border); 
-    /* [修复] 移除 border-left，改用伪元素实现，解决左下角缺角问题 */
     border-left: none;
     margin-left: -15px; 
     width: calc(100% + 15px);
     background-color: transparent; 
     text-decoration: none;
     color: inherit;
-    /* [修复] 移除 border-left-color 过渡 */
     transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1), background-color 0.2s;
     border-radius: 0; 
     box-shadow: none;
@@ -799,7 +803,6 @@ main { flex-grow: 1; padding: 40px 0 80px; }
 .post-list-item:hover,
 .post-list-item:focus { 
     background-color: rgba(0, 0, 0, 0.02); 
-    /* border-left-color: var(--color-primary); [已移除] */
     transform: translateX(5px); /* 悬停右移反馈 */
     outline: none;
 }
@@ -841,7 +844,7 @@ main { flex-grow: 1; padding: 40px 0 80px; }
 }
 
 .post-list-item .meta-date {
-    font-family: monospace;
+    font-family: var(--font-mono);
     opacity: 0.8;
     margin: 0; padding: 0; border: none; background: none; display: inline; height: auto;
 }
@@ -890,7 +893,6 @@ main { flex-grow: 1; padding: 40px 0 80px; }
     .post-list-item:hover,
     .post-list-item:focus {
         background-color: rgba(255, 255, 255, 0.03);
-        /* border-left-color: var(--color-link-dark); [已移除] */
     }
     
     /* [新增] 暗色模式下的伪元素颜色 */
@@ -1002,7 +1004,7 @@ main { flex-grow: 1; padding: 40px 0 80px; }
 }
 
 .archive-date {
-    font-family: 'JetBrains Mono', 'Fira Code', Consolas, monospace; 
+    font-family: var(--font-mono); 
     font-size: 0.95rem;
     color: var(--color-main-subtext);
     margin-right: 20px;
@@ -1285,7 +1287,10 @@ a:focus, button:focus, .tag-cloud-item:focus {
 
 @media (prefers-color-scheme: dark) {
     .highlight { color: #f8f8f2 !important; background: transparent !important; }
-    .highlight pre { background: transparent !important; }
+    .highlight pre { 
+        background: transparent !important; 
+        font-family: var(--font-mono) !important; /* 确保高亮块字体统一 */
+    }
     .highlight .hll { background-color: #49483a }
     .highlight .c { color: #75715e }
     .highlight .err { color: #960050; background-color: #1e0010 }
@@ -1380,6 +1385,7 @@ a:focus, button:focus, .tag-cloud-item:focus {
         white-space: pre-wrap; 
         page-break-inside: avoid;
         padding-top: 15px; /* 打印时移除 MacOS 红绿灯上方的额外空间 */
+        font-family: var(--font-mono) !important;
     }
     .post-content pre::before {
         display: none; /* 打印时不显示红绿灯 */
