@@ -1409,5 +1409,126 @@ a:focus, button:focus, .tag-cloud-item:focus {
     
     a::after { transform: none !important; }
 }
+   /* =========================================
+   Z3. 404 Error Page Styles (Added)
+   ========================================= */
 
+/* 针对 404 页面布局的特殊处理 */
+.page-404 .content-area {
+    /* 让内容区域在视觉上居中，但保留页眉页脚 */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh; /* 确保有足够的高度来居中 */
+}
+
+.page-404 .post-content {
+    /* 移除默认的文章边距，使其完全居中 */
+    width: 100%;
+    max-width: 100%;
+}
+
+/* 404 容器 */
+.error-container {
+    text-align: center;
+    padding: 40px 20px;
+    animation: fadeIn 0.8s ease-out;
+}
+
+/* 巨大的数字 404 */
+.error-code {
+    font-family: var(--font-mono); /* 使用您网站的代码字体 */
+    font-size: 8rem;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--color-primary);
+    margin-bottom: 20px;
+    position: relative;
+    display: inline-block;
+    
+    /* 纯 CSS 阴影效果 */
+    text-shadow: 4px 4px 0px rgba(0, 121, 107, 0.15);
+}
+
+/* 装饰性分割线 */
+.error-divider {
+    width: 60px;
+    height: 4px;
+    background-color: var(--color-main-border);
+    margin: 20px auto;
+    border-radius: 2px;
+}
+
+/* 错误主标题 */
+.error-message {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--color-main-text);
+    margin: 0 0 15px 0;
+    letter-spacing: -0.02em;
+}
+
+/* 错误描述文本 */
+.error-desc {
+    font-size: 1.1rem;
+    color: var(--color-main-subtext);
+    margin-bottom: 40px;
+    line-height: 1.6;
+}
+
+/* 按钮样式微调 (复用现有的 .button) */
+.error-container .button {
+    padding: 12px 30px;
+    font-size: 1rem;
+    background-color: var(--color-primary);
+    color: #fff;
+    border-radius: 50px; /* 圆角更圆润一点 */
+    box-shadow: 0 4px 15px rgba(0, 121, 107, 0.3);
+    transition: transform 0.2s, box-shadow 0.2s, background-color 0.2s;
+}
+
+.error-container .button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(0, 121, 107, 0.4);
+    background-color: #00695c; /* 深一点的主题色 */
+}
+
+.error-container .button:active {
+    transform: translateY(0);
+}
+
+/* 简单的淡入动画 */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- 暗色模式适配 --- */
+@media (prefers-color-scheme: dark) {
+    .error-code {
+        color: var(--color-link-dark);
+        text-shadow: 4px 4px 0px rgba(0, 0, 0, 0.5);
+    }
+    
+    .error-container .button {
+        background-color: var(--color-link-dark);
+        color: var(--color-background-dark);
+        box-shadow: 0 4px 15px rgba(128, 203, 196, 0.2);
+    }
+    
+    .error-container .button:hover {
+        background-color: #b2dfdb;
+        box-shadow: 0 6px 20px rgba(128, 203, 196, 0.3);
+    }
+}
+
+/* 移动端适配 */
+@media (max-width: 600px) {
+    .error-code {
+        font-size: 5rem;
+    }
+    .error-message {
+        font-size: 1.4rem;
+    }
+}
 /* --- END OF FILE style.css --- */
