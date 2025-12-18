@@ -1,4 +1,4 @@
-# generator.py (UI美化版：归档页重构 + 核心链接修复 + JSON-LD)
+# generator.py (UI美化版：归档页重构 + 核心链接修复 + JSON-LD + 404路径修复)
 
 import os
 import shutil 
@@ -42,6 +42,7 @@ def make_internal_url(path: str) -> str:
     normalized_path = path if path.startswith('/') else f'/{path}'
     site_root = get_site_root_prefix()
     
+    # 移除 .html 后缀，除非是特殊文件
     if normalized_path.lower().endswith('.html') and \
        not normalized_path.lower().endswith(config.RSS_FILE) and \
        not normalized_path.lower().endswith(config.SITEMAP_FILE) and \
@@ -51,6 +52,7 @@ def make_internal_url(path: str) -> str:
     if normalized_path.lower() == '/index': 
         normalized_path = '/'
     elif normalized_path.lower() == '/404' or normalized_path.lower() == '/404.html':
+        # 404 页面通常不需要 url 后缀，或者保持原样
         pass 
     elif normalized_path.lower().endswith(config.RSS_FILE):
         pass
@@ -152,6 +154,7 @@ def generate_post_page(post: Dict[str, Any]):
     try:
         relative_link = post.get('link')
         if not relative_link: return
+        # 404 页面不通过此函数生成
         if relative_link.lower() == '404.html': return
 
         clean_name = relative_link[:-5] if relative_link.lower().endswith('.html') else relative_link
@@ -225,10 +228,7 @@ def generate_index_html(sorted_posts: List[Dict[str, Any]], build_time_info: str
 
 
 def generate_archive_html(sorted_posts: List[Dict[str, Any]], build_time_info: str):
-    """
-    生成归档页 (archive/index.html)
-    [UI Update]: 重构 HTML 结构以支持 style.css 中的新设计
-    """
+    """生成归档页 (archive/index.html)"""
     try:
         output_dir = os.path.join(config.BUILD_DIR, 'archive')
         os.makedirs(output_dir, exist_ok=True)
@@ -244,22 +244,17 @@ def generate_archive_html(sorted_posts: List[Dict[str, Any]], build_time_info: s
 
         template = env.get_template('base.html')
         
-        # --- UI 重构开始 ---
-        # 使用 div.archive-page 包裹，去除默认 ul li 样式，使用自定义类名
+        # --- UI 重构: 自定义归档列表样式 ---
         archive_html = "<div class=\"archive-page\">\n"
         
         for year, posts in sorted_archive:
-            # 年份标题
             archive_html += f"<h2 class=\"archive-year\">{year} <small>({len(posts)})</small></h2>\n"
-            # 列表容器
             archive_html += "<ul class=\"archive-list\">\n"
             
             for post in posts:
                 link = make_internal_url(post['link']) 
-                # 使用 MM-DD 格式，因为年份已经是标题了，这样更简洁
                 date_str = post['date'].strftime('%m-%d')
                 
-                # 单个文章项：日期 + 标题
                 archive_html += f"""
                 <li class="archive-item">
                     <span class="archive-date">{date_str}</span>
@@ -269,7 +264,6 @@ def generate_archive_html(sorted_posts: List[Dict[str, Any]], build_time_info: s
             archive_html += "</ul>\n"
             
         archive_html += "</div>"
-        # --- UI 重构结束 ---
             
         context = {
             'page_id': 'archive',
@@ -422,11 +416,19 @@ def generate_rss(parsed_posts: List[Dict[str, Any]]) -> str:
     return f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>{config.BLOG_TITLE}</title><link>{base_url}{make_internal_url("/")}</link><description>{config.BLOG_DESCRIPTION}</description><language>zh-cn</language><atom:link href="{base_url}{rss_link}" rel="self" type="application/rss+xml" /><lastBuildDate>{datetime.now(timezone.utc).strftime("%a, %d %b %Y %H:%M:%S +0000")}</lastBuildDate>{"".join(items)}</channel></rss>'
 
 def generate_page_html(content_html: str, page_title: str, page_id: str, canonical_path_with_html: str, build_time_info: str):
-    """生成通用页面"""
+    """生成通用页面 (已修复：404页面生成在根目录)"""
     try:
-        output_dir = os.path.join(config.BUILD_DIR, page_id)
-        os.makedirs(output_dir, exist_ok=True)
-        output_path = os.path.join(output_dir, 'index.html')
+        # --- 修复开始：针对 404 页面的特殊路径处理 ---
+        if page_id == '404':
+            # 404 页面必须生成在根目录，文件名为 404.html
+            output_dir = config.BUILD_DIR
+            output_path = os.path.join(output_dir, '404.html')
+        else:
+            # 其他页面（如 about）生成在子目录，如 /about/index.html
+            output_dir = os.path.join(config.BUILD_DIR, page_id)
+            os.makedirs(output_dir, exist_ok=True)
+            output_path = os.path.join(output_dir, 'index.html')
+        # --- 修复结束 ---
         
         template = env.get_template('base.html')
         canonical_path = make_internal_url(canonical_path_with_html) 
@@ -449,6 +451,7 @@ def generate_page_html(content_html: str, page_title: str, page_id: str, canonic
         html_content = template.render(context)
         with open(output_path, 'w', encoding='utf-8') as f:
             f.write(html_content)
-        print(f"Generated: {page_id}/index.html")
+        print(f"Generated: {output_path} (Page ID: {page_id})")
+
     except Exception as e:
         print(f"Error {page_id}: {e}")
