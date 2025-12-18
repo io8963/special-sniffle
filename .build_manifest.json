@@ -1,5 +1,9 @@
 {
     "posts": {
+        "markdown/404.md": {
+            "hash": "2d1daa784d87d403b63d36264801c10a85c40f88ce65737a05389532b759e667",
+            "link": "404.html"
+        },
         "markdown/about.md": {
             "hash": "84ebeb5a238b762659bcb34dd67e368ea40593408ec6e8db0ab7e0743c6d7b85",
             "link": "hidden"
