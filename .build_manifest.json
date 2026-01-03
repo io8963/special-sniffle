@@ -18,6 +18,17 @@
             ],
             "hidden": false,
             "status": "published"
+        },
+        "markdown/02.md": {
+            "hash": "9ae1337b2b07a4fbb4b9b99dc7e3899cc6bcc0ffb356371604d5de96cf57d144",
+            "title": 2,
+            "date_str": "2026-01-01",
+            "link": "posts/02.html",
+            "tags_list": [
+                "建站日志"
+            ],
+            "hidden": false,
+            "status": "published"
         }
     },
     "static_files": {
