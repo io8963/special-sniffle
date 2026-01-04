@@ -3,9 +3,9 @@
 import os
 
 # --- 站点配置 ---
-BASE_URL = "https://demo.aa0.site/"
+BASE_URL = "https://blog-generator.mydatali.com/"
 # ！！！关键修改：请将 "/your-repo-name" 替换为您实际的子目录路径或 GitHub 仓库名
-REPO_SUBPATH = "/special-sniffle" 
+REPO_SUBPATH = "" 
 
 # 内部链接的根路径
 SITE_ROOT = REPO_SUBPATH.rstrip('/')
